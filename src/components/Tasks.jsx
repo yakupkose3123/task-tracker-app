@@ -1,12 +1,19 @@
 import React from 'react'
+import Button from './Button'
 import Task from './Task'
 
-const Tasks = ({tasks, deleteTask}) => {
+const Tasks = ({tasks, deleteTask,handleDoubleClick,noTask ,allDeleteTasks}) =>{
+  
   return (
-    <div>{
-        tasks.map((task)=>
-        <Task task = {task} deleteTask = {deleteTask}/>                       
+    <div>
+      {!tasks.length &&  <h3 style={{textAlign :"center"}}>{noTask}</h3> }
+      {
+        tasks.map((task,index)=>
+        <Task task = {task} deleteTask = {deleteTask} handleDoubleClick={handleDoubleClick} index={index}/>                       
         )}
+        {tasks.length ?
+        <Button color = "red" text = "Delete All Task Lists" handleClick ={allDeleteTasks} /> 
+        :""}
     </div>
   )
 }

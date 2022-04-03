@@ -1,23 +1,26 @@
 /* import PropTypes from "prop-types";//prop type nı belirlemek için kuallnılır */
 
+
 import Button from "./Button";
 
 
 
-const Header = ({title}) => { // buranın içine deafult props  {title = "task default şeklindede tanımlayabilrisin "}
+const Header = ({title,handleClickHeader,buttonText}) => { // buranın içine deafult props  {title = "task default şeklindede tanımlayabilrisin "}
+  
 
-  const handleClickHeader = ()=>{
-    alert("clickOn header")
-}
+ 
 
   return (
     <div className="header">
-        <h1>{title}</h1>
+        <h1>{title}</h1>      
         <Button 
         handleClick={handleClickHeader}
-        color = "purple"
-        text = "Show Add Task Bar"
+        color = {buttonText==="Show Add Task Bar" ? "purple": "red"}
+        text = {buttonText}
          />
+        
+  
+         
     </div>
   )
 };

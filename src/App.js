@@ -4,6 +4,7 @@ import Header from './components/Header';
 import {useState} from "react";
 import AddTask from './components/AddTask';
 import Tasks from './components/Tasks';
+import {v4 as uuidv4} from "uuid";
 
 function App() {
   const [tasks, settasks] = useState([
@@ -29,10 +30,12 @@ function App() {
 
   // ADD TASK
 const addTask = (newTask)=>{
-  const id = Math.floor(Math.random() * 1000 + 1);
-  const addNewTask = {id, ...newTask};
+  
+  const addNewTask = {id:uuidv4(), ...newTask};
   settasks([...tasks, addNewTask]);
 };
+
+
 
 
   // DELETE TASK
@@ -40,15 +43,33 @@ const addTask = (newTask)=>{
     // console.log(id);
     settasks(tasks.filter((task) =>task.id !== id))
   }
-
+  const allDeleteTasks = ()=> settasks([])
   
+
+  //TOGGLE DONE
+  const handleDoubleClick = (toggleDoneId)=>{
+    // alert("doubleClick");
+    settasks(tasks.map((task)=> task.id === toggleDoneId ? {...task, isDone: !task.isDone}: task)); 
+
+  }
+
+  //SHOW ADD TASK
+  const [buttonText, setbuttonText] = useState("Close Add Task Bar");
+  const [showAdd, setshowAdd] = useState(true);
+
+  const handleClickHeader = ()=>{
+    setbuttonText(buttonText === "Close Add Task Bar" ? "Show Add Task Bar": "Close Add Task Bar");
+    setshowAdd(!showAdd);    
+} 
+  
+
 
 
   return (
     <div className="container">
-      <Header title = "TASK TRACKER"/>
-      <AddTask addTask = {addTask}/>
-      <Tasks tasks = {tasks} deleteTask={deleteTask}/>
+      <Header title = "TASK TRACKER" buttonText={buttonText} handleClickHeader = {handleClickHeader}/>
+      { showAdd && <AddTask addTask = {addTask}  /> }
+      <Tasks tasks = {tasks} deleteTask={deleteTask} handleDoubleClick={handleDoubleClick} noTask ="NO TASK TO SHOW" allDeleteTasks={allDeleteTasks}/>
     </div>
   );
 }
