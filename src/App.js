@@ -1,34 +1,33 @@
 
 import './App.css';
 import Header from './components/Header';
-import {useState} from "react";
+import {useState , useEffect} from "react";
 import AddTask from './components/AddTask';
 import Tasks from './components/Tasks';
 import {v4 as uuidv4} from "uuid";
 
 function App() {
-  const [tasks, settasks] = useState([
-    {
-      id : 1,
-      text : "Study React Pre-Class Notes",
-      day : "Dec 12th at 2:30pm",
-      isDone : false,
-    },
-    {
-      id : 2,
-      text : "Feed the Dog",
-      day : "Oc 12th at 1:30pm",
-      isDone : true,
-    },
-    {
-      id : 3,
-      text : "Attend In-Class",
-      day : "Dec 12th at 2:30pm",
-      isDone : false,
-    },
-  ]);
+  const [tasks, settasks] = useState([]);
 
-  // ADD TASK
+  const baseUrl = "http://localhost:5000/tasks";
+
+  //!CRUD Create Read Update Delete
+
+  //? Fetch Tasks
+  const fetchTask = async () =>{
+    const res = await fetch(baseUrl);
+    const data = await res.json();
+    settasks(data);
+  };
+
+  
+ useEffect(() => {  
+  fetchTask();
+ }, [])
+ 
+
+
+  //? ADD TASK
 const addTask = (newTask)=>{
   
   const addNewTask = {id:uuidv4(), ...newTask};
@@ -38,7 +37,7 @@ const addTask = (newTask)=>{
 
 
 
-  // DELETE TASK
+  //? DELETE TASK
   const deleteTask = (id)=>{
     // console.log(id);
     settasks(tasks.filter((task) =>task.id !== id))
