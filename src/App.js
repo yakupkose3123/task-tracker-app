@@ -5,6 +5,7 @@ import {useState , useEffect} from "react";
 import AddTask from './components/AddTask';
 import Tasks from './components/Tasks';
 import {v4 as uuidv4} from "uuid";
+import axios from 'axios';
 
 function App() {
   const [tasks, settasks] = useState([]);
@@ -13,44 +14,83 @@ function App() {
 
   //!CRUD Create Read Update Delete
 
-  //? Fetch Tasks
+/*   //? Fetch Tasks
   const fetchTask = async () =>{
-    const res = await fetch(baseUrl);
+    try 
+      {const res = await fetch(baseUrl);
     const data = await res.json();
     settasks(data);
-  };
+    }  
+     catch (error) {
+       alert(error);     
+      }
 
-  
+  } */
+
+  //? Fetch Tasks with axios
+
+  const fetchTask = async ()=>{
+    const {data} = await axios.get(baseUrl);
+    settasks(data);
+  }
+
+
+
  useEffect(() => {  
   fetchTask();
  }, [])
- 
+
 
 
   //? ADD TASK
-const addTask = (newTask)=>{
-  
-  const addNewTask = {id:uuidv4(), ...newTask};
-  settasks([...tasks, addNewTask]);
-};
+  //! https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch 
+  //* buradan post methodunu incele 
+ /* const addTask = async(newTask)=>{
+   const res = await fetch(baseUrl, {
+     method: "POST",
+     headers : {
+       "Content-Type": "application/json"
+     },
+     body : JSON.stringify(newTask)
+   })
+   await res.json();
+   fetchTask();
+ } */
 
+ //? ADD TASK WİTH AXİOS
 
+ const addTask = async(newTask)=>{
+   await axios.post(baseUrl, newTask);
+   fetchTask();
+ }
 
 
   //? DELETE TASK
-  const deleteTask = (id)=>{
-    // console.log(id);
-    settasks(tasks.filter((task) =>task.id !== id))
+  const deleteTask = async (id)=>{
+    await axios.delete(baseUrl+"/"+id);
+    fetchTask();
   }
-  const allDeleteTasks = ()=> settasks([])
+
+  const allDeleteTasks = ()=>{
+    tasks.map((task)=>
+     axios.delete(baseUrl+"/"+task.id)
+    );
+    fetchTask();
+  }
+ 
   
 
-  //TOGGLE DONE
-  const handleDoubleClick = (toggleDoneId)=>{
-    // alert("doubleClick");
-    settasks(tasks.map((task)=> task.id === toggleDoneId ? {...task, isDone: !task.isDone}: task)); 
+  //?TOGGLE DONE
+  const handleDoubleClick = async(toggleDoneId)=>{
+    const {data} = await axios.get(baseUrl +"/"+toggleDoneId);
+    // const updateTask = {...data, isDone: !data.isDone};
+    // await axios.put(baseUrl +"/"+toggleDoneId, updateTask);
+    await axios.patch(baseUrl +"/"+toggleDoneId, {isDone:!data.isDone});
+    //patch yama gibi sadece update ettiğin kısmı gönderiyorsun, put ta hepsini
 
+    fetchTask();
   }
+
 
   //SHOW ADD TASK
   const [buttonText, setbuttonText] = useState("Close Add Task Bar");
